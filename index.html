@@ -12,8 +12,8 @@
   <!-- Cargar Babel para JSX -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   
-  <!-- Cargar Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Cargar Lucide Icons - Versión UMD específica para uso correcto -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   
   <!-- Cargar Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -30,6 +30,17 @@
     pre {
       white-space: pre-wrap;
       word-wrap: break-word;
+    }
+    
+    /* Estilos para los iconos de Lucide */
+    .lucide {
+      width: 1em;
+      height: 1em;
+      stroke-width: 2;
+      stroke: currentColor;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
   </style>
 </head>
@@ -340,7 +351,7 @@
           noExperiences: 'No experiences available in this category'
         };
 
-        // Generar código HTML (versión resumida por cuestiones de longitud)
+        // Generar código HTML
         return `<!DOCTYPE html>
 <html lang="${options.language}">
 <head>
@@ -349,9 +360,9 @@
   <title>${options.title}</title>
   <style>
     :root {
-      --primary-color: ${options.primaryColor};
-      --primary-dark: ${options.primaryColor}dd;
-      --primary-light: ${options.primaryColor}33;
+      --primary-color: ${validateColor(options.primaryColor)};
+      --primary-dark: ${validateColor(options.primaryColor)}dd;
+      --primary-light: ${validateColor(options.primaryColor)}33;
       --text-light: #ffffff;
       --text-dark: #333333;
       --background-light: #f8f9fa;
@@ -373,12 +384,17 @@
       overflow: hidden;
     }
     
-    /* Estilos completos aquí... */
     header {
       background-color: var(--primary-color);
       color: var(--text-light);
       padding: 1rem;
       text-align: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
     }
     
     .container {
@@ -389,6 +405,7 @@
       overflow-y: auto;
     }
     
+    /* Tabs navigation */
     .tabs {
       display: flex;
       border-bottom: 1px solid #ddd;
@@ -399,6 +416,7 @@
       padding: 0.75rem 1rem;
       cursor: pointer;
       border-bottom: 2px solid transparent;
+      transition: all 0.3s ease;
     }
     
     .tab.active {
@@ -407,19 +425,119 @@
       font-weight: 500;
     }
     
+    /* Grid view */
     .grid-view {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 1rem;
     }
     
+    /* List view */
+    .list-view {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    
+    .list-view .card {
+      display: flex;
+      align-items: center;
+    }
+    
+    .list-view .card-img {
+      width: 80px;
+      height: 80px;
+      flex-shrink: 0;
+      margin-right: 1rem;
+    }
+    
+    /* Carousel view */
+    .carousel-view {
+      display: flex;
+      overflow-x: auto;
+      padding: 0.5rem 0;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    .carousel-view .card {
+      flex: 0 0 280px;
+      margin-right: 1rem;
+      scroll-snap-align: start;
+    }
+    
+    /* Card component */
     .card {
       background-color: white;
       border-radius: var(--border-radius);
       overflow: hidden;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
     }
     
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-img {
+      width: 100%;
+      height: 180px;
+      background-color: #f0f0f0;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    
+    .card-content {
+      padding: 1rem;
+    }
+    
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    
+    .card-desc {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 1rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .tag {
+      background-color: var(--primary-light);
+      color: var(--primary-color);
+      padding: 0.25rem 0.5rem;
+      border-radius: 100px;
+      font-size: 0.75rem;
+      display: inline-flex;
+      align-items: center;
+    }
+    
+    .tag-external {
+      background-color: #e3f2fd;
+      color: #1976d2;
+    }
+    
+    .card-cta {
+      text-align: center;
+    }
+    
+    /* Buttons */
     .btn {
       display: inline-flex;
       align-items: center;
@@ -436,6 +554,122 @@
     .btn-primary {
       background-color: var(--primary-color);
       color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+    }
+    
+    .btn-outline {
+      background-color: transparent;
+      border: 1px solid var(--primary-color);
+      color: var(--primary-color);
+    }
+    
+    .btn-outline:hover {
+      background-color: var(--primary-light);
+    }
+    
+    .btn-block {
+      display: block;
+      width: 100%;
+    }
+    
+    /* External badge */
+    .external-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #1976d2;
+      color: white;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 2rem;
+      color: #666;
+    }
+    
+    /* Loading screen */
+    .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--background-light);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      transition: opacity 0.5s ease;
+    }
+    
+    .loader {
+      width: 60px;
+      height: 60px;
+      border: 5px solid var(--primary-light);
+      border-top: 5px solid var(--primary-color);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 1rem;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* WebXR view */
+    .webxr-view {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: black;
+      z-index: 900;
+      display: none;
+    }
+    
+    .webxr-canvas {
+      width: 100%;
+      height: 100%;
+    }
+    
+    .webxr-buttons {
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
+    
+    /* Media queries */
+    @media (max-width: 768px) {
+      .grid-view {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .grid-view {
+        grid-template-columns: 1fr;
+      }
+      
+      .carousel-view .card {
+        flex: 0 0 240px;
+      }
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/three@0.157.0/build/three.min.js"></script>
@@ -458,7 +692,27 @@
           <div class="${options.menuStyle === 'grid' ? 'grid-view' : options.menuStyle === 'list' ? 'list-view' : 'carousel-view'}">
             ${data.menu[key].experiences.length ? data.menu[key].experiences.map(exp => `
               <div class="card" data-experience-id="${exp.id}">
-                <!-- Aquí va el contenido de las tarjetas -->
+                <div class="card-img" style="background-image: url('${exp.thumbnailUrl || 'https://via.placeholder.com/300x180?text=No+Image'}')">
+                  ${exp.isExternal ? '<div class="external-badge"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg></div>' : ''}
+                </div>
+                <div class="card-content">
+                  <h3 class="card-title">${exp.title}</h3>
+                  <p class="card-desc">${exp.description}</p>
+                  <div class="card-tags">
+                    ${exp.experienceTypes.map(type => `<span class="tag">${type.toUpperCase()}</span>`).join('')}
+                    ${exp.isExternal ? `<span class="tag tag-external">${texts.external}</span>` : ''}
+                  </div>
+                  <div class="card-cta">
+                    ${exp.isExternal ?
+                      `<a href="${exp.externalUrl}" target="_blank" class="btn btn-primary btn-block">${texts.external}</a>` :
+                      exp.experienceTypes.includes('ar') ?
+                        `<button class="btn btn-primary btn-block start-ar" data-id="${exp.id}">${texts.enterAR}</button>` :
+                        exp.experienceTypes.includes('vr') ?
+                          `<button class="btn btn-primary btn-block start-vr" data-id="${exp.id}">${texts.enterVR}</button>` :
+                          `<button class="btn btn-primary btn-block view-3d" data-id="${exp.id}">${texts.start}</button>`
+                    }
+                  </div>
+                </div>
               </div>
             `).join('') : `<div class="empty-state">${texts.noExperiences}</div>`}
           </div>
@@ -467,49 +721,329 @@
     </div>
   </div>
   
+  <!-- WebXR View -->
+  <div class="webxr-view">
+    <canvas class="webxr-canvas"></canvas>
+    <div class="webxr-buttons">
+      <button class="btn btn-primary exit-xr">${texts.back}</button>
+    </div>
+  </div>
+  
+  ${options.includeLoadingScreen ? `
+  <!-- Loading Screen -->
+  <div class="loading-screen">
+    <div class="loader"></div>
+    <p>${texts.loading}</p>
+  </div>
+  ` : ''}
+  
   <script>
-    // Código JavaScript de la aplicación WebXR
-    // Todo el código de inicialización y gestión de AR/VR/3D
+    // Datos de la aplicación
+    const appData = ${JSON.stringify(data)};
     
-    document.addEventListener('DOMContentLoaded', () => {
-      // Inicialización
-      console.log('WebXR Application initialized');
-    });
+    // Referencias a elementos DOM
+    const tabs = document.querySelectorAll('.tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+    const webxrView = document.querySelector('.webxr-view');
+    const webxrCanvas = document.querySelector('.webxr-canvas');
+    const exitXrButton = document.querySelector('.exit-xr');
+    ${options.includeLoadingScreen ? 'const loadingScreen = document.querySelector(".loading-screen");' : ''}
+    
+    // Variables para Three.js
+    let scene, camera, renderer, controls, currentModel;
+    let xrSession = null;
+    
+    // Inicializar la aplicación
+    function init() {
+      // Configurar pestañas
+      tabs[0].classList.add('active');
+      tabContents[0].style.display = 'block';
+      
+      for (let i = 1; i < tabContents.length; i++) {
+        tabContents[i].style.display = 'none';
+      }
+      
+      // Asignar eventos
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          // Desactivar todas las pestañas
+          tabs.forEach(t => t.classList.remove('active'));
+          tabContents.forEach(c => c.style.display = 'none');
+          
+          // Activar la pestaña seleccionada
+          tab.classList.add('active');
+          const content = document.querySelector(\`.tab-content[data-content="\${tab.dataset.tab}"]\`);
+          if (content) content.style.display = 'block';
+        });
+      });
+      
+      // Eventos para botones AR/VR/3D
+      document.querySelectorAll('.start-ar').forEach(button => {
+        button.addEventListener('click', () => startAR(button.dataset.id));
+      });
+      
+      document.querySelectorAll('.start-vr').forEach(button => {
+        button.addEventListener('click', () => startVR(button.dataset.id));
+      });
+      
+      document.querySelectorAll('.view-3d').forEach(button => {
+        button.addEventListener('click', () => view3D(button.dataset.id));
+      });
+      
+      // Evento para salir de XR
+      exitXrButton.addEventListener('click', exitXR);
+      
+      // Inicializar Three.js
+      initThree();
+      
+      ${options.includeLoadingScreen ? `
+      // Ocultar pantalla de carga
+      setTimeout(() => {
+        loadingScreen.style.opacity = '0';
+        setTimeout(() => {
+          loadingScreen.style.display = 'none';
+        }, 500);
+      }, 1500);
+      ` : ''}
+    }
+    
+    // Inicializar Three.js
+    function initThree() {
+      // Crear escena
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x000000);
+      
+      // Crear cámara
+      camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.z = 5;
+      
+      // Crear renderer
+      renderer = new THREE.WebGLRenderer({
+        canvas: webxrCanvas,
+        antialias: true,
+        alpha: true
+      });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.xr.enabled = true;
+      
+      // Iluminación
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+      scene.add(ambientLight);
+      
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+      directionalLight.position.set(0, 5, 5);
+      scene.add(directionalLight);
+      
+      // Controles de órbita
+      controls = new THREE.OrbitControls(camera, webxrCanvas);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      
+      // Manejar cambio de tamaño de ventana
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+      
+      // Iniciar bucle de renderizado
+      renderer.setAnimationLoop(render);
+    }
+    
+    // Función de renderizado
+    function render() {
+      if (controls) controls.update();
+      renderer.render(scene, camera);
+    }
+    
+    // Cargar modelo 3D
+    function loadModel(modelUrl) {
+      return new Promise((resolve, reject) => {
+        // Si ya hay un modelo, eliminarlo
+        if (currentModel) {
+          scene.remove(currentModel);
+          currentModel = null;
+        }
+        
+        // Crear loader
+        const loader = new THREE.GLTFLoader();
+        
+        // Cargar modelo
+        loader.load(
+          modelUrl,
+          (gltf) => {
+            const model = gltf.scene;
+            
+            // Centrar el modelo
+            const box = new THREE.Box3().setFromObject(model);
+            const center = box.getCenter(new THREE.Vector3());
+            const size = box.getSize(new THREE.Vector3());
+            
+            // Ajustar posición y escala
+            model.position.x = -center.x;
+            model.position.y = -center.y;
+            model.position.z = -center.z;
+            
+            const maxDim = Math.max(size.x, size.y, size.z);
+            if (maxDim > 0) {
+              model.scale.multiplyScalar(5 / maxDim);
+            }
+            
+            // Añadir a la escena
+            scene.add(model);
+            currentModel = model;
+            
+            resolve(model);
+          },
+          (xhr) => {
+            // Progreso
+            console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+          },
+          (error) => {
+            // Error
+            console.error('Error loading model:', error);
+            reject(error);
+          }
+        );
+      });
+    }
+    
+    // Iniciar experiencia AR
+    function startAR(id) {
+      if (!navigator.xr) {
+        alert('${texts.arSupport}');
+        return;
+      }
+      
+      // Buscar experiencia
+      const experience = findExperience(id);
+      if (!experience) return;
+      
+      // Mostrar vista WebXR
+      webxrView.style.display = 'block';
+      
+      // Cargar modelo
+      loadModel(experience.modelUrl).then(() => {
+        // Iniciar sesión AR
+        navigator.xr.requestSession('immersive-ar', {
+          requiredFeatures: ['hit-test']
+        }).then(session => {
+          xrSession = session;
+          renderer.xr.setSession(session);
+          
+          session.addEventListener('end', () => {
+            xrSession = null;
+          });
+        }).catch(error => {
+          console.error('Error starting AR session:', error);
+          alert('${texts.arSupport}');
+          exitXR();
+        });
+      }).catch(error => {
+        console.error('Error loading model:', error);
+        exitXR();
+      });
+    }
+    
+    // Iniciar experiencia VR
+    function startVR(id) {
+      if (!navigator.xr) {
+        alert('${texts.vrSupport}');
+        return;
+      }
+      
+      // Buscar experiencia
+      const experience = findExperience(id);
+      if (!experience) return;
+      
+      // Mostrar vista WebXR
+      webxrView.style.display = 'block';
+      
+      // Cargar modelo
+      loadModel(experience.modelUrl).then(() => {
+        // Iniciar sesión VR
+        navigator.xr.requestSession('immersive-vr', {
+          optionalFeatures: ['local-floor', 'bounded-floor']
+        }).then(session => {
+          xrSession = session;
+          renderer.xr.setSession(session);
+          
+          session.addEventListener('end', () => {
+            xrSession = null;
+          });
+        }).catch(error => {
+          console.error('Error starting VR session:', error);
+          alert('${texts.vrSupport}');
+          exitXR();
+        });
+      }).catch(error => {
+        console.error('Error loading model:', error);
+        exitXR();
+      });
+    }
+    
+    // Ver modelo 3D (sin XR)
+    function view3D(id) {
+      // Buscar experiencia
+      const experience = findExperience(id);
+      if (!experience) return;
+      
+      // Mostrar vista WebXR
+      webxrView.style.display = 'block';
+      
+      // Resetear cámara
+      camera.position.set(0, 0, 5);
+      controls.reset();
+      
+      // Cargar modelo
+      loadModel(experience.modelUrl).catch(error => {
+        console.error('Error loading model:', error);
+        exitXR();
+      });
+    }
+    
+    // Salir de la experiencia XR
+    function exitXR() {
+      if (xrSession) {
+        xrSession.end();
+        xrSession = null;
+      }
+      
+      webxrView.style.display = 'none';
+    }
+    
+    // Buscar experiencia por ID
+    function findExperience(id) {
+      for (const category in appData.menu) {
+        const experience = appData.menu[category].experiences.find(exp => exp.id === id);
+        if (experience) return experience;
+      }
+      return null;
+    }
+    
+    // Inicializar la aplicación cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', init);
   </script>
 </body>
 </html>`;
       };
       
-      // Componentes de Lucide Icons
-      const renderIcon = (name, size = 16, className = "") => {
-        try {
-          return React.createElement('i', {
-            className: `lucide lucide-${name} ${className}`,
-            style: { width: size, height: size }
-          });
-        } catch (e) {
-          console.error(`Error rendering icon ${name}:`, e);
-          return null;
-        }
+      // Validar color hexadecimal
+      const validateColor = (color) => {
+        const isValid = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color);
+        return isValid ? color : '#6366f1'; // Color por defecto si no es válido
       };
       
-      // Crear iconos para usar en la aplicación
-      const icons = {
-        X: (props) => renderIcon('x', props.size, props.className),
-        Plus: (props) => renderIcon('plus', props.size, props.className),
-        Save: (props) => renderIcon('save', props.size, props.className),
-        Upload: (props) => renderIcon('upload', props.size, props.className),
-        Download: (props) => renderIcon('download', props.size, props.className),
-        Move: (props) => renderIcon('move', props.size, props.className),
-        Edit: (props) => renderIcon('edit', props.size, props.className),
-        Trash2: (props) => renderIcon('trash-2', props.size, props.className),
-        Eye: (props) => renderIcon('eye', props.size, props.className),
-        Code: (props) => renderIcon('code', props.size, props.className),
-        Layout: (props) => renderIcon('layout', props.size, props.className),
-        CheckCircle: (props) => renderIcon('check-circle', props.size, props.className),
-        Globe: (props) => renderIcon('globe', props.size, props.className),
-        FileCode: (props) => renderIcon('file-code', props.size, props.className),
-        Settings: (props) => renderIcon('settings', props.size, props.className),
+      // Crear SVG para iconos
+      const createIcon = (name, size = 16, className = "") => {
+        return (
+          <i 
+            data-lucide={name} 
+            className={className}
+            style={{ width: `${size}px`, height: `${size}px` }}
+          ></i>
+        );
       };
       
       // Inicializar iconos de Lucide
@@ -518,11 +1052,6 @@
           window.lucide.createIcons();
         }
       }, []);
-      
-      const validateColor = (color) => {
-        const isValid = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color);
-        return isValid ? color : '#6366f1'; // Color por defecto si no es válido
-      };
       
       return (
         <div className="flex flex-col h-screen bg-gray-50">
@@ -535,25 +1064,25 @@
                   onClick={() => setShowJsonPreview(!showJsonPreview)}
                   className="flex items-center px-3 py-2 bg-indigo-700 rounded hover:bg-indigo-800 transition"
                 >
-                  {icons.Code({ size: 16, className: "mr-2" })} {showJsonPreview ? "Ocultar JSON" : "Mostrar JSON"}
+                  {createIcon("code", 16, "mr-2")} {showJsonPreview ? "Ocultar JSON" : "Mostrar JSON"}
                 </button>
                 <button
                   onClick={() => setPreviewMode(!previewMode)}
                   className="flex items-center px-3 py-2 bg-indigo-700 rounded hover:bg-indigo-800 transition"
                 >
-                  {icons.Eye({ size: 16, className: "mr-2" })} {previewMode ? "Modo Edición" : "Vista Previa"}
+                  {createIcon("eye", 16, "mr-2")} {previewMode ? "Modo Edición" : "Vista Previa"}
                 </button>
                 <button
                   onClick={() => setShowGeneratorModal(true)}
                   className="flex items-center px-3 py-2 bg-purple-600 rounded hover:bg-purple-700 transition"
                 >
-                  {icons.Code({ size: 16, className: "mr-2" })} Generar App WebXR
+                  {createIcon("code", 16, "mr-2")} Generar App WebXR
                 </button>
                 <button
                   onClick={saveData}
                   className="flex items-center px-3 py-2 bg-green-600 rounded hover:bg-green-700 transition"
                 >
-                  {icons.Save({ size: 16, className: "mr-2" })} Guardar
+                  {createIcon("save", 16, "mr-2")} Guardar
                 </button>
               </div>
             </div>
@@ -562,7 +1091,7 @@
           {/* Mensaje de estado de guardado */}
           {saveStatus && (
             <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mx-4 mt-2 flex items-center">
-              {icons.CheckCircle({ size: 16, className: "mr-2" })}
+              {createIcon("check-circle", 16, "mr-2")}
               {saveStatus}
             </div>
           )}
@@ -604,7 +1133,7 @@
                       onClick={addExperience}
                       className="flex items-center px-2 py-1 bg-indigo-500 text-white rounded hover:bg-indigo-600 transition"
                     >
-                      {icons.Plus({ size: 16, className: "mr-1" })} Añadir
+                      {createIcon("plus", 16, "mr-1")} Añadir
                     </button>
                   </div>
                   
@@ -629,7 +1158,7 @@
                       >
                         <div className="flex items-center flex-1">
                           <div className="mr-2">
-                            {icons.Move({ size: 16, className: "text-gray-400" })}
+                            {createIcon("move", 16, "text-gray-400")}
                           </div>
                           <div 
                             className="flex-1 cursor-pointer"
@@ -640,7 +1169,7 @@
                               Tipos: {experience.experienceTypes.map(t => t.toUpperCase()).join(', ')}
                               {experience.isExternal && (
                                 <span className="ml-1 inline-flex items-center">
-                                  {icons.Globe({ size: 10, className: "mr-1" })} Externa
+                                  {createIcon("globe", 10, "mr-1")} Externa
                                 </span>
                               )}
                             </div>
@@ -650,7 +1179,7 @@
                           onClick={() => deleteExperience(experience.id)}
                           className="p-1 text-red-500 hover:bg-red-50 rounded"
                         >
-                          {icons.Trash2({ size: 16 })}
+                          {createIcon("trash-2", 16)}
                         </button>
                       </li>
                     ))}
@@ -669,10 +1198,10 @@
                         onClick={exportJson}
                         className="flex items-center px-3 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition"
                       >
-                        {icons.Download({ size: 16, className: "mr-2" })} Exportar JSON
+                        {createIcon("download", 16, "mr-2")} Exportar JSON
                       </button>
                       <label className="flex items-center px-3 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition cursor-pointer">
-                        {icons.Upload({ size: 16, className: "mr-2" })} Importar JSON
+                        {createIcon("upload", 16, "mr-2")} Importar JSON
                         <input
                           type="file"
                           accept=".json"
@@ -694,7 +1223,7 @@
                           onClick={() => setEditingExperience(null)}
                           className="p-1 text-gray-400 hover:text-gray-600"
                         >
-                          {icons.X({ size: 20 })}
+                          {createIcon("x", 20)}
                         </button>
                       </div>
                       
@@ -921,7 +1450,7 @@
                     </div>
                   ) : (
                     <div className="flex flex-col items-center justify-center h-full py-16 text-gray-500">
-                      {icons.Edit({ size: 48, className: "mb-4 text-gray-300" })}
+                      {createIcon("edit", 48, "mb-4 text-gray-300")}
                       <p>Selecciona una experiencia para editar o crea una nueva</p>
                     </div>
                   )}
@@ -938,7 +1467,7 @@
                     onClick={() => setShowJsonPreview(false)}
                     className="p-1 text-gray-400 hover:text-gray-200"
                   >
-                    {icons.X({ size: 20 })}
+                    {createIcon("x", 20)}
                   </button>
                 </div>
                 <pre className="text-sm font-mono whitespace-pre-wrap">
@@ -958,7 +1487,7 @@
                     onClick={() => setPreviewMode(false)}
                     className="p-2 text-gray-600 hover:text-gray-800"
                   >
-                    {icons.X({ size: 20 })}
+                    {createIcon("x", 20)}
                   </button>
                 </div>
                 
@@ -981,11 +1510,11 @@
                                       className="w-full h-full object-cover"
                                     />
                                   ) : (
-                                    <div>{icons.Layout({ size: 32, className: "text-gray-400" })}</div>
+                                    <div>{createIcon("layout", 32, "text-gray-400")}</div>
                                   )}
                                   {exp.isExternal && (
                                     <div className="absolute top-2 right-2 bg-blue-500 text-white p-1 rounded-full">
-                                      {icons.Globe({ size: 16 })}
+                                      {createIcon("globe", 16)}
                                     </div>
                                   )}
                                 </div>
@@ -996,242 +1525,244 @@
                                   </p>
                                   <div className="flex flex-wrap gap-2 mt-2">
                                     {exp.experienceTypes.map((type) => (
-                                      <span
-                                        key={type}
-                                        className="text-xs px-2 py-1 bg-indigo-100 text-indigo-800 rounded"
-                                      >
-                                        {type.toUpperCase()}
-                                      </span>
-                                    ))}
-                                    {exp.isExternal && (
-                                      <span className="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded flex items-center">
-                                        {icons.Globe({ size: 12, className: "mr-1" })} Externa
-                                      </span>
-                                    )}
+                                        <span
+                                          key={type}
+                                          className="text-xs px-2 py-1 bg-indigo-100 text-indigo-800 rounded"
+                                        >
+                                          {type.toUpperCase()}
+                                        </span>
+                                      ))}
+                                      {exp.isExternal && (
+                                        <span className="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded flex items-center">
+                                          {createIcon("globe", 12, "mr-1")} Externa
+                                        </span>
+                                      )}
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          <p className="text-gray-500">No hay experiencias en esta categoría todavía.</p>
-                        )}
-                      </div>
-                    );
-                  })}
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-gray-500">No hay experiencias en esta categoría todavía.</p>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
-          
-          {/* Modal Generador de App WebXR */}
-          {showGeneratorModal && (
-            <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
-              <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-screen overflow-auto">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold">Generador de Aplicación WebXR</h2>
-                  <button
-                    onClick={() => {
-                      setShowGeneratorModal(false);
-                      setGeneratedCodeVisible(false);
-                    }}
-                    className="p-2 text-gray-600 hover:text-gray-800"
-                  >
-                    {icons.X({ size: 20 })}
-                  </button>
-                </div>
-                
-                {!generatedCodeVisible ? (
-                  <div className="space-y-6">
-                    <p className="text-gray-600">Configura las opciones para generar automáticamente una aplicación WebXR que utilice los datos definidos en el editor.</p>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Título de la aplicación
-                        </label>
-                        <input
-                          type="text"
-                          value={generatorOptions.title}
-                          onChange={(e) => setGeneratorOptions({...generatorOptions, title: e.target.value})}
-                          className="w-full p-2 border border-gray-300 rounded focus:ring-indigo-500 focus:border-indigo-500"
-                        />
-                      </div>
+            )}
+            
+            {/* Modal Generador de App WebXR */}
+            {showGeneratorModal && (
+              <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+                <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-screen overflow-auto">
+                  <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-2xl font-bold">Generador de Aplicación WebXR</h2>
+                    <button
+                      onClick={() => {
+                        setShowGeneratorModal(false);
+                        setGeneratedCodeVisible(false);
+                      }}
+                      className="p-2 text-gray-600 hover:text-gray-800"
+                    >
+                      {createIcon("x", 20)}
+                    </button>
+                  </div>
+                  
+                  {!generatedCodeVisible ? (
+                    <div className="space-y-6">
+                      <p className="text-gray-600">Configura las opciones para generar automáticamente una aplicación WebXR que utilice los datos definidos en el editor.</p>
                       
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Color primario (HEX)
-                        </label>
-                        <div className="flex items-center">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Título de la aplicación
+                          </label>
                           <input
                             type="text"
-                            value={generatorOptions.primaryColor}
-                            onChange={(e) => setGeneratorOptions({
-                              ...generatorOptions, 
-                              primaryColor: validateColor(e.target.value)
-                            })}
-                            className="flex-1 p-2 border border-gray-300 rounded-l focus:ring-indigo-500 focus:border-indigo-500"
+                            value={generatorOptions.title}
+                            onChange={(e) => setGeneratorOptions({...generatorOptions, title: e.target.value})}
+                            className="w-full p-2 border border-gray-300 rounded focus:ring-indigo-500 focus:border-indigo-500"
                           />
-                          <div 
-                            className="w-10 h-10 rounded-r border-t border-r border-b border-gray-300"
-                            style={{ backgroundColor: validateColor(generatorOptions.primaryColor) }}
-                          ></div>
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Color primario (HEX)
+                          </label>
+                          <div className="flex items-center">
+                            <input
+                              type="text"
+                              value={generatorOptions.primaryColor}
+                              onChange={(e) => setGeneratorOptions({
+                                ...generatorOptions, 
+                                primaryColor: validateColor(e.target.value)
+                              })}
+                              className="flex-1 p-2 border border-gray-300 rounded-l focus:ring-indigo-500 focus:border-indigo-500"
+                            />
+                            <div 
+                              className="w-10 h-10 rounded-r border-t border-r border-b border-gray-300"
+                              style={{ backgroundColor: validateColor(generatorOptions.primaryColor) }}
+                            ></div>
+                          </div>
+                        </div>
+                        
+                        <div className="md:col-span-2">
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Descripción
+                          </label>
+                          <textarea
+                            value={generatorOptions.description}
+                            onChange={(e) => setGeneratorOptions({...generatorOptions, description: e.target.value})}
+                            rows={2}
+                            className="w-full p-2 border border-gray-300 rounded focus:ring-indigo-500 focus:border-indigo-500"
+                          />
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Idioma
+                          </label>
+                          <select
+                            value={generatorOptions.language}
+                            onChange={(e) => setGeneratorOptions({...generatorOptions, language: e.target.value})}
+                            className="w-full p-2 border border-gray-300 rounded focus:ring-indigo-500 focus:border-indigo-500"
+                          >
+                            <option value="es">Español</option>
+                            <option value="en">Inglés</option>
+                          </select>
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Estilo de menú
+                          </label>
+                          <select
+                            value={generatorOptions.menuStyle}
+                            onChange={(e) => setGeneratorOptions({...generatorOptions, menuStyle: e.target.value})}
+                            className="w-full p-2 border border-gray-300 rounded focus:ring-indigo-500 focus:border-indigo-500"
+                          >
+                            <option value="grid">Cuadrícula</option>
+                            <option value="list">Lista</option>
+                            <option value="carousel">Carrusel</option>
+                          </select>
                         </div>
                       </div>
                       
-                      <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Descripción
-                        </label>
-                        <textarea
-                          value={generatorOptions.description}
-                          onChange={(e) => setGeneratorOptions({...generatorOptions, description: e.target.value})}
-                          rows={2}
-                          className="w-full p-2 border border-gray-300 rounded focus:ring-indigo-500 focus:border-indigo-500"
-                        />
+                      <div className="space-y-2">
+                        <div className="flex items-center">
+                          <input
+                            type="checkbox"
+                            id="includeLoadingScreen"
+                            checked={generatorOptions.includeLoadingScreen}
+                            onChange={(e) => setGeneratorOptions({...generatorOptions, includeLoadingScreen: e.target.checked})}
+                            className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded mr-2"
+                          />
+                          <label htmlFor="includeLoadingScreen" className="text-sm font-medium text-gray-700">
+                            Incluir pantalla de carga
+                          </label>
+                        </div>
+                        
+                        <div className="flex items-center">
+                          <input
+                            type="checkbox"
+                            id="generateFullProject"
+                            checked={generatorOptions.generateFullProject}
+                            onChange={(e) => setGeneratorOptions({...generatorOptions, generateFullProject: e.target.checked})}
+                            className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded mr-2"
+                          />
+                          <label htmlFor="generateFullProject" className="text-sm font-medium text-gray-700">
+                            Generar proyecto completo (incluye archivos HTML, CSS y JS)
+                          </label>
+                        </div>
                       </div>
                       
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Idioma
-                        </label>
-                        <select
-                          value={generatorOptions.language}
-                          onChange={(e) => setGeneratorOptions({...generatorOptions, language: e.target.value})}
-                          className="w-full p-2 border border-gray-300 rounded focus:ring-indigo-500 focus:border-indigo-500"
-                        >
-                          <option value="es">Español</option>
-                          <option value="en">Inglés</option>
-                        </select>
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Estilo de menú
-                        </label>
-                        <select
-                          value={generatorOptions.menuStyle}
-                          onChange={(e) => setGeneratorOptions({...generatorOptions, menuStyle: e.target.value})}
-                          className="w-full p-2 border border-gray-300 rounded focus:ring-indigo-500 focus:border-indigo-500"
-                        >
-                          <option value="grid">Cuadrícula</option>
-                          <option value="list">Lista</option>
-                          <option value="carousel">Carrusel</option>
-                        </select>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <div className="flex items-center">
-                        <input
-                          type="checkbox"
-                          id="includeLoadingScreen"
-                          checked={generatorOptions.includeLoadingScreen}
-                          onChange={(e) => setGeneratorOptions({...generatorOptions, includeLoadingScreen: e.target.checked})}
-                          className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded mr-2"
-                        />
-                        <label htmlFor="includeLoadingScreen" className="text-sm font-medium text-gray-700">
-                          Incluir pantalla de carga
-                        </label>
-                      </div>
-                      
-                      <div className="flex items-center">
-                        <input
-                          type="checkbox"
-                          id="generateFullProject"
-                          checked={generatorOptions.generateFullProject}
-                          onChange={(e) => setGeneratorOptions({...generatorOptions, generateFullProject: e.target.checked})}
-                          className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded mr-2"
-                        />
-                        <label htmlFor="generateFullProject" className="text-sm font-medium text-gray-700">
-                          Generar proyecto completo (incluye archivos HTML, CSS y JS)
-                        </label>
-                      </div>
-                    </div>
-                    
-                    <div className="flex justify-end space-x-2 pt-4 border-t">
-                      <button
-                        onClick={() => setShowGeneratorModal(false)}
-                        className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
-                      >
-                        Cancelar
-                      </button>
-                      <button
-                        onClick={() => {
-                          // Generar el código basado en las opciones y datos
-                          const generatedAppCode = generateWebXRApp(data, generatorOptions);
-                          setGeneratedCode(generatedAppCode);
-                          setGeneratedCodeVisible(true);
-                        }}
-                        className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
-                      >
-                        Generar Código
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <h3 className="text-lg font-medium">Código Generado</h3>
-                      <div className="flex space-x-2">
+                      <div className="flex justify-end space-x-2 pt-4 border-t">
                         <button
-                          onClick={() => {
-                            // Volver a las opciones
-                            setGeneratedCodeVisible(false);
-                          }}
-                          className="flex items-center px-3 py-1 border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
+                          onClick={() => setShowGeneratorModal(false)}
+                          className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
                         >
-                          {icons.Settings({ size: 16, className: "mr-1" })} Opciones
+                          Cancelar
                         </button>
                         <button
                           onClick={() => {
-                            // Descargar el código como un archivo
-                            const blob = new Blob([generatedCode], { type: 'text/html' });
-                            const url = URL.createObjectURL(blob);
-                            const link = document.createElement('a');
-                            link.href = url;
-                            link.download = 'webxr-app.html';
-                            link.click();
+                            // Generar el código basado en las opciones y datos
+                            const generatedAppCode = generateWebXRApp(data, generatorOptions);
+                            setGeneratedCode(generatedAppCode);
+                            setGeneratedCodeVisible(true);
                           }}
-                          className="flex items-center px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
+                          className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
                         >
-                          {icons.Download({ size: 16, className: "mr-1" })} Descargar
+                          Generar Código
                         </button>
                       </div>
                     </div>
-                    
-                    <div className="bg-gray-800 text-white p-4 rounded-lg max-h-96 overflow-auto">
-                      <pre className="text-sm font-mono whitespace-pre-wrap">
-                        {generatedCode}
-                      </pre>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <h3 className="text-lg font-medium">Código Generado</h3>
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => {
+                              // Volver a las opciones
+                              setGeneratedCodeVisible(false);
+                            }}
+                            className="flex items-center px-3 py-1 border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
+                          >
+                            {createIcon("settings", 16, "mr-1")} Opciones
+                          </button>
+                          <button
+                            onClick={() => {
+                              // Descargar el código como un archivo
+                              const blob = new Blob([generatedCode], { type: 'text/html' });
+                              const url = URL.createObjectURL(blob);
+                              const link = document.createElement('a');
+                              link.href = url;
+                              link.download = 'webxr-app.html';
+                              link.click();
+                            }}
+                            className="flex items-center px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
+                          >
+                            {createIcon("download", 16, "mr-1")} Descargar
+                          </button>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-gray-800 text-white p-4 rounded-lg max-h-96 overflow-auto">
+                        <pre className="text-sm font-mono whitespace-pre-wrap">
+                          {generatedCode}
+                        </pre>
+                      </div>
+                      
+                      <div className="bg-blue-50 border-l-4 border-blue-400 p-4 text-blue-700">
+                        <p className="font-medium">Instrucciones de uso:</p>
+                        <ol className="list-decimal list-inside mt-2 space-y-1 text-sm">
+                          <li>Descarga el archivo HTML generado</li>
+                          <li>Asegúrate de que las URLs de los modelos 3D y miniaturas sean accesibles</li>
+                          <li>Abre el archivo en un navegador compatible con WebXR</li>
+                          <li>Para experiencias AR/MR necesitarás un dispositivo compatible con WebXR</li>
+                        </ol>
+                      </div>
                     </div>
-                    
-                    <div className="bg-blue-50 border-l-4 border-blue-400 p-4 text-blue-700">
-                      <p className="font-medium">Instrucciones de uso:</p>
-                      <ol className="list-decimal list-inside mt-2 space-y-1 text-sm">
-                        <li>Descarga el archivo HTML generado</li>
-                        <li>Asegúrate de que las URLs de los modelos 3D y miniaturas sean accesibles</li>
-                        <li>Abre el archivo en un navegador compatible con WebXR</li>
-                        <li>Para experiencias AR/MR necesitarás un dispositivo compatible con WebXR</li>
-                      </ol>
-                    </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
-            </div>
-          )}
-        </div>
-      );
-    };
-    
-    // Renderizar el componente en el DOM
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<WebXRContentEditor />);
-    
-    // Inicializar iconos de Lucide
-    document.addEventListener('DOMContentLoaded', () => {
-      lucide.createIcons();
-    });
-  </script>
-</body>
-</html>
+            )}
+          </div>
+        );
+      };
+      
+      // Renderizar el componente en el DOM
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<WebXRContentEditor />);
+      
+      // Inicializar iconos de Lucide cuando el DOM esté listo
+      document.addEventListener('DOMContentLoaded', () => {
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+      });
+    </script>
+  </body>
+  </html>
